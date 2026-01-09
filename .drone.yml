@@ -112,6 +112,27 @@ steps: # qa
       # we use --ignore-deprecations because we don't want the CI to fail when the API has not been removed yet.
       - /pluto detect distribution.yml --ignore-deprecations --target-versions=k8s=v1.33.0
 
+  - name: security-scan
+    image: aquasec/trivy:latest
+    pull: always
+    depends_on:
+      - install-tools
+    commands:
+      - trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+      - trivy config --severity HIGH,CRITICAL --exit-code 1 .
+
+  - name: dependency-audit
+    image: quay.io/sighup/mise:v2025.4.4
+    pull: always
+    depends_on:
+      - install-tools
+    volumes:
+      - name: mise-cache
+        path: /mise-data
+    commands:
+      - eval "$(mise activate bash --shims)"
+      - go list -json -m all | nancy sleuth --severity high,critical
+
 ---
 name: e2e-kfddistribution-1.33
 kind: pipeline
