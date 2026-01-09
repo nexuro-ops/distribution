@@ -11,8 +11,8 @@
 <p align="center">SIGHUP Distribution (SD) is a certified battle-tested Kubernetes distribution based purely on upstream Kubernetes.</p>
 <!-- markdownlint-enable MD033 MD045 -->
 
-[![Build Status](http://ci.sighup.io/api/badges/sighupio/distribution/status.svg?ref=refs/tags/v1.33.1)](http://ci.sighup.io/sighupio/distribution)
-[![Release](https://img.shields.io/badge/release-v1.33.1-blue?label=DistributionRelease)](https://github.com/sighupio/distribution/releases/latest)
+[![Build Status](http://ci.sighup.io/api/badges/sighupio/distribution/status.svg?ref=refs/tags/v1.35.0)](http://ci.sighup.io/sighupio/distribution)
+[![Release](https://img.shields.io/badge/release-v1.35.0-blue?label=DistributionRelease)](https://github.com/sighupio/distribution/releases/latest)
 [![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack)](https://kubernetes.slack.com/archives/C0154HYTAQH)
 [![License](https://img.shields.io/github/license/sighupio/distribution)](https://github.com/sighupio/distribution/blob/main/LICENSE)
 
@@ -136,13 +136,24 @@ Current supported versions of SD are:
 
 |                                  SD Version                               | Kubernetes Version |
 | :-----------------------------------------------------------------------: | :----------------: |
+| [`1.35.0`](https://github.com/sighupio/distribution/releases/tag/v1.35.0) |      `1.35.x`      |
 | [`1.33.1`](https://github.com/sighupio/distribution/releases/tag/v1.33.1) |      `1.33.x`      |
 | [`1.32.1`](https://github.com/sighupio/distribution/releases/tag/v1.32.1) |      `1.32.x`      |
-| [`1.31.2`](https://github.com/sighupio/distribution/releases/tag/v1.31.2) |      `1.31.x`      |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information about previous releases of the Distribution and the compatibility with `furyctl`.
 
 Also, check the [versioning documentation file][versioning] to know more about the versioning scheme of the distribution and the upgrade path.
+
+### Kubernetes 1.35.x Compatibility ⚙️
+
+SIGHUP Distribution v1.35.0 is now available with full support for **Kubernetes 1.35.x**!
+
+**Important Requirements for Kubernetes 1.35:**
+- ⚠️ **Cgroup v2 Mandatory:** All infrastructure nodes must support cgroup v2 (cgroup v1 no longer supported)
+- ⚠️ **containerd 2.0 Planning:** Kubernetes 1.35 is the final version supporting containerd 1.x. Plan migration to containerd 2.0+ before upgrading to Kubernetes 1.36
+- ⚠️ **EKS Users:** Amazon Linux 2 (alinux2) has been removed. Migrate to Amazon Linux 2023 (alinux2023)
+
+For detailed compatibility information, module validation, and upgrade procedures, please see the [K8S_1.35_VALIDATION_REPORT.md](K8S_1.35_VALIDATION_REPORT.md).
 
 ## CNCF Certified 🎓
 
