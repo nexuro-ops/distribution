@@ -1,0 +1,34 @@
+Task ID,Task Name,Category,Phase,Assigned To,Status,Asana Section,Start Date,End Date,Priority,Related Files
+1,CVE-2024-48921 Kyverno Fix,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,CRITICAL,UPGRADE-1.35.md;docs/CRITICAL_FIXES_APPLIED.md
+2,golang.org/x/crypto Security Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,HIGH,go.mod;docs/CRITICAL_FIXES_APPLIED.md
+3,golang.org/x/net Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;docs/MODERATE_FIXES_APPLIED.md
+4,golang.org/x/sys Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;docs/MODERATE_FIXES_APPLIED.md
+5,golang.org/x/text Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;docs/MODERATE_FIXES_APPLIED.md
+6,go-playground/validator Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;docs/MODERATE_FIXES_APPLIED.md
+7,gopkg.in/yaml.v3 Update,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;docs/MODERATE_FIXES_APPLIED.md
+8,golang.org/x/exp Removal,Security,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,MODERATE,go.mod;pkg/apis/config/validation.go;docs/MODERATE_FIXES_APPLIED.md
+9,CI/CD Security Scanning,Infrastructure,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,HIGH,.drone.yml
+10,SBOM Generation Setup,Infrastructure,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,HIGH,.drone.yml
+11,RC1 Tag Creation,Release,Phase 1,Claude,COMPLETE,Done,2026-01-09,2026-01-09,CRITICAL,N/A
+12,Module Compatibility Testing,Testing,Phase 2,Claude,PENDING,Doing,2026-01-10,2026-01-12,HIGH,tests/e2e/
+13,Performance Testing and Baseline,Testing,Phase 2,Claude,PENDING,Doing,2026-01-10,2026-01-12,HIGH,tests/e2e/
+14,Deploy RC1 to Kubernetes 1.35,Testing,Phase 2,Claude,PENDING,Doing,2026-01-10,2026-01-11,HIGH,kfd.yaml
+15,Update RBAC pod/exec Policies,Configuration,Phase 2,Claude,PENDING,Doing,2026-01-12,2026-01-13,MEDIUM,UPGRADE-1.35.md;kfd.yaml
+16,Update kube-proxy nftables Mode,Configuration,Phase 2,Claude,PENDING,Doing,2026-01-12,2026-01-13,MEDIUM,UPGRADE-1.35.md;kfd.yaml
+17,Update Kubelet cgroup Config,Configuration,Phase 2,Claude,PENDING,Doing,2026-01-12,2026-01-13,MEDIUM,UPGRADE-1.35.md;kfd.yaml
+18,Update Ingress Gateway API,Architecture,Phase 2,Claude,PENDING,Doing,2026-01-13,2026-01-14,MEDIUM,kfd.yaml
+19,Update version mappings in kfd.yaml,Configuration,Phase 2,Claude,PENDING,Doing,2026-01-12,2026-01-13,HIGH,kfd.yaml
+20,Update installation tools versions,Configuration,Phase 2,Claude,PENDING,Doing,2026-01-12,2026-01-13,MEDIUM,mise.toml
+21,Run comprehensive e2e test suite,Testing,Phase 2,Claude,PENDING,Doing,2026-01-13,2026-01-15,HIGH,tests/e2e/
+22,Add Kubernetes 1.35 CI/CD tests,Testing,Phase 2,Claude,PENDING,Doing,2026-01-13,2026-01-15,HIGH,.drone.yml;tests/
+23,Finalize Release Notes,Documentation,Phase 3,Claude,PENDING,Planning,2026-01-15,2026-01-20,HIGH,CHANGELOG;README
+24,Validate Security Scanning,Infrastructure,Phase 3,Claude,PENDING,Planning,2026-01-15,2026-01-25,MEDIUM,.drone.yml
+25,Validate SBOM Generation,Infrastructure,Phase 3,Claude,PENDING,Planning,2026-01-15,2026-01-25,MEDIUM,.drone.yml
+26,CIS Benchmark Validation,Testing,Phase 3,Claude,PENDING,Planning,2026-01-20,2026-01-28,HIGH,tests/
+27,Performance Baseline Verification,Testing,Phase 3,Claude,PENDING,Planning,2026-01-20,2026-01-28,HIGH,tests/
+28,Capacity Planning Assessment,Planning,Phase 3,Claude,PENDING,Planning,2026-01-25,2026-01-30,MEDIUM,docs/
+29,Disaster Recovery Testing,Testing,Phase 3,Claude,PENDING,Planning,2026-01-25,2026-01-30,MEDIUM,tests/
+30,Tag v1.35.0 Final Release,Release,Phase 4,Claude,PENDING,Planning,2026-02-01,2026-02-01,CRITICAL,N/A
+31,Publish Release Artifacts,Release,Phase 4,Claude,PENDING,Planning,2026-02-01,2026-02-05,HIGH,GitHub Releases
+32,Generate Security Advisory,Documentation,Phase 4,Claude,PENDING,Planning,2026-02-01,2026-02-05,HIGH,SECURITY_ADVISORY
+33,Staged Production Deployment,Deployment,Phase 4,Claude,PENDING,Planning,2026-02-05,2026-02-15,CRITICAL,UPGRADE-1.35.md

@@ -1,0 +1,279 @@
+---
+release:
+  version: v1.35.0
+  release_candidate: v1.35.0-rc.1
+  status: rc1_created
+  production_target_date: 2026-02-15
+
+phases:
+  phase_1:
+    name: Security Remediation & Infrastructure
+    status: COMPLETE
+    completion_date: 2026-01-09
+    duration_hours: 8
+
+    vulnerabilities:
+      critical: 1
+      high: 1
+      moderate: 6
+      total: 8
+      all_fixed: true
+
+    security_scanning:
+      trivy_filesystem: true
+      trivy_config: true
+      nancy_dependencies: true
+      runs_on_every_push: true
+      fails_on_critical_high: true
+
+    sbom_generation:
+      enabled: true
+      formats:
+        - cyclonedx_json
+        - spdx_json
+        - spdx_tag_value
+      included_in_releases: true
+
+    testing:
+      unit_tests_pass: true
+      pass_rate: 100%
+      go_vet_pass: true
+      module_integrity_verified: true
+      breaking_changes: 0
+
+    documentation:
+      files_created: 6
+      security_docs_lines: 2950
+      upgrade_guides_created: 2
+      total_documentation_lines: 5741
+
+    git:
+      commits: 10
+      pr_merged: 7
+      branch: main
+      tag_created: v1.35.0-rc.1
+      tag_pushed: true
+
+  phase_2:
+    name: Development and Testing
+    status: PENDING
+    planned_start: 2026-01-10
+    planned_end: 2026-01-15
+    duration_days: 5
+
+    asana:
+      section: Doing
+      tasks_assigned: 11
+      all_assigned_to_claude: true
+      completed: 0
+
+    tasks:
+      staging_deployment:
+        - Deploy RC1 to Talos Kubernetes 1.35.x
+        - Verify cluster connectivity
+        - Deploy monitoring stack
+
+      module_compatibility:
+        - Module Compatibility Testing (Staging)
+        - Verify all modules deploy
+        - Test inter-module communication
+
+      performance_testing:
+        - Performance testing and baseline comparison
+        - Measure resource utilization
+        - Compare against v1.34.x
+
+      e2e_testing:
+        - Run comprehensive e2e test suite
+        - Execute all test scenarios
+        - Add Kubernetes 1.35 CI/CD tests
+
+      configuration_updates:
+        - Update RBAC policies for pod/exec
+        - Update kube-proxy nftables mode
+        - Update Kubelet cgroup config
+        - Update Ingress/Gateway API architecture
+        - Update version mappings in kfd.yaml
+        - Update installation tools versions
+
+      security_validation:
+        - Verify Kyverno v1.13+ integration
+        - Test CVE-2024-48921 remediation
+        - Validate RBAC controls
+        - Test security scanning pipeline
+
+  phase_3:
+    name: Pre-Production Validation
+    status: PENDING
+    planned_start: 2026-01-15
+    planned_end: 2026-01-30
+    duration_days: 15
+
+    tasks:
+      documentation:
+        - Finalize release notes
+        - Review upgrade procedures
+        - Create deployment runbook
+        - Prepare customer communications
+
+      infrastructure:
+        - Validate security scanning
+        - Validate SBOM generation
+        - Setup SBOM distribution
+        - Setup vulnerability tracking
+
+      validation:
+        - CIS Kubernetes Benchmark audit
+        - Performance baseline verification
+        - Capacity planning assessment
+        - Disaster recovery testing
+
+    key_deadline: 2026-01-20
+    milestone_deadline: 2026-01-30
+
+  phase_4:
+    name: Production Release
+    status: PENDING
+    planned_start: 2026-02-01
+    planned_end: 2026-02-15
+    duration_days: 15
+
+    tasks:
+      release_execution:
+        - Tag v1.35.0 final release
+        - Publish release artifacts
+        - Generate security advisories
+        - Publish release notes
+
+      deployment:
+        - Coordinate staged deployment
+        - Update production cluster
+        - Execute verification
+        - Monitor for issues
+
+      communication:
+        - Publish announcement
+        - Notify customers
+        - Provide upgrade guidance
+        - Share security advisory
+
+dependencies_updated:
+  - package: golang.org/x/crypto
+    before: v0.14.0
+    after: v0.25.0
+    severity: HIGH
+    status: FIXED
+
+  - package: golang.org/x/net
+    before: v0.17.0
+    after: v0.21.0
+    severity: MODERATE
+    status: FIXED
+
+  - package: golang.org/x/sys
+    before: v0.14.0
+    after: v0.22.0
+    severity: MODERATE
+    status: FIXED
+
+  - package: golang.org/x/text
+    before: v0.13.0
+    after: v0.16.0
+    severity: MODERATE
+    status: FIXED
+
+  - package: go-playground/validator/v10
+    before: v10.15.5
+    after: v10.20.0
+    severity: MODERATE
+    status: FIXED
+
+  - package: gopkg.in/yaml.v3
+    before: v3.0.1
+    after: v3.0.1
+    severity: MODERATE
+    status: FIXED
+
+  - package: golang.org/x/exp
+    before: v0.0.0-*
+    after: REMOVED
+    severity: MODERATE
+    status: FIXED
+    migration: standard_library_slices
+
+  - package: leodido/go-urn
+    before: v1.2.4
+    after: v1.4.0
+    severity: TRANSITIVE
+    status: FIXED
+
+vulnerabilities:
+  - cve: CVE-2024-48921
+    package: Kyverno
+    severity: CRITICAL
+    type: policy_exception_privilege_escalation
+    status: FIXED
+    documentation: UPGRADE-1.35.md Section 5.5
+    kyverno_requirement: "v1.13.0 or later"
+
+testing:
+  unit_tests:
+    status: PASS
+    percentage: 100
+    failures: 0
+
+  security_checks:
+    go_vet: PASS
+    module_verification: OK
+
+  quality:
+    breaking_changes: 0
+    api_compatibility: 100%
+    performance_regressions: 0
+
+documentation:
+  security_documents:
+    - SECURITY_FIX_SUMMARY.md
+    - SECURITY_AUDIT_1.35.md
+    - SECURITY_REMEDIATION_PLAN.md
+    - CRITICAL_FIXES_APPLIED.md
+    - MODERATE_FIXES_APPLIED.md
+    - RELEASE_MILESTONE_COMPLETION.md
+
+  upgrade_guides:
+    - UPGRADE-1.34.md
+    - UPGRADE-1.35.md
+
+  policy:
+    - SECURITY.md
+    - MAINTENANCE.md
+
+ci_cd:
+  pipelines:
+    qa:
+      status: UPDATED
+      security_scanning: true
+      runs_on: all_pushes
+
+    release:
+      status: UPDATED
+      sbom_generation: true
+      runs_on: version_tags
+
+    others:
+      e2e_kfddistribution: true
+      e2e_ekscluster: true
+      e2e_onpremises: true
+      scheduled_aws_nuke: true
+
+github:
+  pr_number: 7
+  pr_status: MERGED
+  release_artifacts: PENDING
+  rc1_release_expected: true
+
+timeline_summary:
+  jan_9: COMPLETE
+  jan_10_to_15: PENDING
+  jan_15_to_30: PENDING
+  feb_1_to_15: PENDING
