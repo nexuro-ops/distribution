@@ -103,3 +103,93 @@ After the release of the distribution and furyctl have been done, there are some
 1. Update the quick-start guides in https://github.com/sighupio/getting-started/
 2. Update SD's documentation site with the new versions https://github.com/sighupio/docs/
 3. Run the CVE patching pipeline by adding the newly released SIGHUP versions https://github.com/sighupio/container-image-sync/
+
+## Support Timeline and Version Management
+
+SIGHUP Distribution follows a **3-minor-version support window** aligned with Kubernetes releases. Each minor Kubernetes version release is supported for approximately 9 months from its release date.
+
+### Kubernetes 1.35 Support Schedule
+
+| Version | Release Date | Support Status | Support Window | EOL Date |
+|---------|-------------|---|---|---|
+| **v1.35.x** | December 17, 2025 | **Current (Stable)** | Full support | ~September 2026 |
+| **v1.34.x** | September 2025 | Maintenance | Extended support | ~June 2026 |
+| **v1.33.x** | June 2025 | Legacy | Critical patches only | ~March 2026 |
+| v1.32.x | March 2025 | Unsupported | No updates | January 2026 |
+
+### v1.35.0 Release Details
+
+**Release Date:** January 2026 (planned)
+**Target Kubernetes:** v1.35.0+
+**Status:** Pre-release (RC phase completed)
+
+**Key Changes for Operations Teams:**
+- **Mandatory Cgroup v2** - All nodes must be on cgroup v2 (not optional in v1.35)
+- **IPVS Deprecation** - Migration to nftables mode strongly recommended
+- **Containerd 2.0 Support** - v1.35 is the last release supporting containerd 1.x
+- **RBAC Policy Updates** - pod/exec, pod/attach, pod/portforward require `create` verb
+- **Image Pull Validation** - Credentials validated on every Pod, even for cached images
+
+### Release Timeline for v1.35
+
+| Phase | Timeframe | Activity | Responsible Team |
+|-------|-----------|----------|-----------------|
+| **Phase 1: Prep** | 3-4 weeks pre-release | Cgroup v2 upgrade, infrastructure readiness | Platform Engineering |
+| **Phase 2: Dev & Test** | 2-3 weeks | Manifest updates, staging deployment, e2e tests | Development Team |
+| **Phase 3: Docs & Release** | 1-2 weeks | Security audit, documentation, release notes | Product/Security Team |
+| **Phase 4: Release** | 1 week | Tag release, publish artifacts, communications | Release Manager |
+| **Phase 5: Rollout** | 4+ weeks | Customer adoption, patch releases, support | Support Team |
+
+### Pre-Upgrade Checklist for v1.35
+
+**Before scheduling your upgrade to v1.35, verify:**
+
+1. ✅ **Cgroup v2 Ready** - All nodes running cgroup v2 (`stat -fc %T /sys/fs/cgroup/` shows `cgroup2fs`)
+2. ✅ **Container Runtime** - containerd 1.7+ installed (plan upgrade to 2.0+ post-1.35)
+3. ✅ **RBAC Audit** - All pod/exec permissions updated to use `create` verb
+4. ✅ **Image Secrets** - All registry credentials valid and non-expired
+5. ✅ **Network Proxy** - Document current proxy mode (IPVS vs iptables/nftables)
+6. ✅ **Module Compatibility** - Confirm all operators support Kubernetes 1.35
+
+See [UPGRADE-1.35.md](./UPGRADE-1.35.md) for comprehensive pre-upgrade validation steps.
+
+### Version-Specific Documentation
+
+- **v1.35 Upgrade Guide:** [UPGRADE-1.35.md](./UPGRADE-1.35.md) - Detailed breaking changes and migration steps
+- **v1.34 Upgrade Guide:** [UPGRADE-1.34.md](./UPGRADE-1.34.md) - Previous upgrade documentation
+- **Compatibility Matrix:** [docs/COMPATIBILITY_MATRIX.md](./docs/COMPATIBILITY_MATRIX.md) - Module version compatibility per Kubernetes version
+- **Security Audit:** [docs/SECURITY_AUDIT_1.35.md](./docs/SECURITY_AUDIT_1.35.md) - Security review of v1.35 changes
+
+### Planning Your Upgrade
+
+**Early Adopters** (January-February 2026)
+- Test v1.35 in non-production environments
+- Participate in feedback and issue reporting
+- Help identify edge cases and problems
+
+**Production Deployments** (February-April 2026)
+- After initial stability validation
+- Use v1.34 LTS as fallback if issues found
+- Plan maintenance windows for cgroup v2 upgrade
+
+**Legacy Systems** (May+ 2026)
+- Continue on v1.33 if v1.35 incompatibilities found
+- Plan longer migration timeline
+- Request extended support if needed
+
+### Patch Release Schedule
+
+After v1.35.0 release:
+
+- **v1.35.1+** - Monthly patch releases (security + critical bugs)
+- **v1.34.x** - Maintenance patches until June 2026
+- **v1.33.x** - Critical security patches only until March 2026
+
+### Support Communication
+
+- **Release Announcements:** GitHub releases, SIGHUP mailing list
+- **Known Issues:** Updated in [UPGRADE-1.35.md](./UPGRADE-1.35.md#known-issues-and-workarounds)
+- **Security Issues:** Reported to security@sighup.io, patched via CVE process
+- **Migration Help:** [Community forums](https://github.com/sighupio/distribution/discussions), GitHub issues
+
+For questions or concerns about upgrading to v1.35, see [docs/FAQ.md](./docs/FAQ.md) or contact SIGHUP support.
