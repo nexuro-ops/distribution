@@ -6,11 +6,11 @@ package config
 
 import (
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/Al-Pragliola/go-version"
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/exp/slices"
 )
 
 const (
