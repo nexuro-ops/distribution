@@ -1,0 +1,44 @@
+version: 2
+updates:
+  # Go module dependency updates
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    open-pull-requests-limit: 10
+    # Assign reviews to security team
+    reviewers:
+      - "nexuro-ops"
+    # Allow all dependency updates
+    allow:
+      - dependency-type: "all"
+    # Configure commit messages
+    commit-message:
+      prefix: "deps"
+      prefix-scope: "gomod"
+      include: "scope"
+    # Add labels for categorization
+    labels:
+      - "dependencies"
+      - "go"
+      - "automated"
+    # Prioritize security and patch updates
+    ignore:
+      # Ignore major version changes for experimental packages
+      - dependency-name: "golang.org/x/exp"
+        update-types:
+          - "version-update:semver-major"
+
+  # GitHub Actions updates (optional)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"

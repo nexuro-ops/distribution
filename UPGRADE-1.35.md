@@ -671,6 +671,171 @@ grep -r "pods/exec" templates/distribution/
 - `templates/distribution/manifests/auth/*/rbac.yaml`
 - `templates/distribution/manifests/*/rbac.yaml` (any custom RBAC)
 
+### 5.5. SECURITY FIX: CVE-2024-48921 - Kyverno Policy Exception Privilege Escalation
+
+**Priority: CRITICAL - Security Fix Required**
+
+This vulnerability affects Kyverno v1.12 and earlier where policy exceptions are enabled by default for all namespaces, allowing privilege escalation and policy bypass attacks.
+
+**SIGHUP Distribution Status:**
+- ✅ v1.35.0 requires Kyverno v1.13.0 or later (fixed)
+- ⚠️ If upgrading from v1.34.x: Verify Kyverno version
+- 🔴 Kyverno v1.12 deployments MUST be upgraded before v1.35.0
+
+**Required Actions:**
+
+1. **Verify current Kyverno version:**
+```bash
+helm list -n kyverno
+# Should show v1.13.0 or later
+# Look for chart version, not app version
+```
+
+2. **If running Kyverno v1.12 or earlier, upgrade immediately:**
+```bash
+# 1. Backup current policies
+kubectl get clusterpolicies -o yaml > kyverno-policies-backup.yaml
+kubectl get policies -A -o yaml > kyverno-policies-namespaced-backup.yaml
+
+# 2. Update Kyverno via Helm
+helm repo add kyverno https://kyverno.github.io/kyverno/
+helm repo update kyverno
+
+# Get latest compatible version for your K8s version
+helm search repo kyverno/kyverno
+
+# Upgrade to v1.13.0 or later
+helm upgrade kyverno kyverno/kyverno \
+  --namespace kyverno \
+  --values values.yaml \
+  --wait
+
+# 3. Verify upgrade
+kubectl wait --for=condition=Ready pod \
+  -l app.kubernetes.io/name=kyverno \
+  -n kyverno \
+  --timeout=300s
+
+# 4. Test policy functionality
+kubectl apply -f test-policy.yaml
+```
+
+3. **Update Kyverno policies to be explicit about exceptions:**
+
+Create/update cluster policies to explicitly deny policy exceptions unless needed:
+
+```yaml
+# File: templates/distribution/manifests/opa/kyverno/cluster-policy-deny-exceptions.yaml
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-policy-exceptions
+  namespace: kyverno
+spec:
+  validationFailureAction: audit  # Change to enforce after testing
+  rules:
+  - name: deny-policy-exceptions-default
+    match:
+      resources:
+        kinds:
+        - PolicyException
+    validate:
+      message: "Policy exceptions must be explicitly approved"
+      pattern:
+        ={}: null
+    deny:
+      conditions:
+        any:
+        - key: "{{request.namespace}}"
+          operator: Equals
+          value: "default"
+        - key: "{{request.namespace}}"
+          operator: Equals
+          value: "kube-system"
+```
+
+4. **Restrict policy exception creation:**
+
+```yaml
+# File: templates/distribution/manifests/auth/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: policy-exception-admin
+rules:
+- apiGroups: ["kyverno.io"]
+  resources: ["policyexceptions"]
+  verbs: ["create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: policy-exception-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: policy-exception-admin
+subjects:
+- kind: Group
+  name: "security-admins"  # Replace with your security team group
+  apiGroup: rbac.authorization.k8s.io
+```
+
+5. **Audit policy exceptions:**
+
+```bash
+# List all policy exceptions
+kubectl get policyexceptions -A
+
+# Audit logs for policy exception creation
+kubectl logs -n kyverno deployment/kyverno \
+  | grep -i "exception"
+
+# Check Kyverno policy rule violations
+kubectl get policyreport -A
+```
+
+6. **Testing:**
+
+```bash
+# Test that policies are enforced
+kubectl run test-pod --image=nginx --namespace default
+
+# Test policy exception workflow (after RBAC restrictions applied)
+kubectl apply -f - <<EOF
+apiVersion: kyverno.io/v1alpha1
+kind: PolicyException
+metadata:
+  name: test-exception
+  namespace: default
+spec:
+  exceptions:
+  - ruleIndex: 0
+    ruleType: "validate"
+  match:
+    resources:
+      kinds:
+      - Pod
+      selector:
+        matchLabels:
+          exception: "true"
+EOF
+```
+
+**Related Documentation:**
+- https://kyverno.io/docs/release-notes/v1.13.0/
+- https://github.com/kyverno/kyverno/security/advisories/GHSA-xxxx-xxxx-xxxx (CVE-2024-48921)
+
+**Verification Checklist:**
+- [ ] Kyverno upgraded to v1.13.0+
+- [ ] Policy exceptions audit policy in place
+- [ ] RBAC restrictions on policy exception creation
+- [ ] Policies tested in staging environment
+- [ ] Existing policy exceptions audited
+- [ ] Documentation updated with new procedures
+
+---
+
 ### 6. Update CI/CD Testing (.drone.yml)
 
 Add Kubernetes 1.35 testing with cgroup v2 focus:
