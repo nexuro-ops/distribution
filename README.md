@@ -1,9 +1,9 @@
 <!-- markdownlint-disable MD033 MD045 -->
 <h1 align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/white-logo.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/black-logo.png">
-  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/white-logo.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nexuro-ops/distribution/refs/heads/main/docs/assets/white-logo.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nexuro-ops/distribution/refs/heads/main/docs/assets/black-logo.png">
+  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://raw.githubusercontent.com/nexuro-ops/distribution/refs/heads/main/docs/assets/white-logo.png">
 </picture><br/>
   SIGHUP Distribution
 </h1>
@@ -11,10 +11,10 @@
 <p align="center">SIGHUP Distribution (SD) is a certified battle-tested Kubernetes distribution based purely on upstream Kubernetes.</p>
 <!-- markdownlint-enable MD033 MD045 -->
 
-[![Build Status](http://ci.sighup.io/api/badges/sighupio/distribution/status.svg?ref=refs/tags/v1.35.0)](http://ci.sighup.io/sighupio/distribution)
-[![Release](https://img.shields.io/badge/release-v1.35.0-blue?label=DistributionRelease)](https://github.com/sighupio/distribution/releases/latest)
+[![Build Status](http://ci.sighup.io/api/badges/nexuro-ops/distribution/status.svg?ref=refs/tags/v1.35.0)](http://ci.sighup.io/nexuro-ops/distribution)
+[![Release](https://img.shields.io/badge/release-v1.35.0-blue?label=DistributionRelease)](https://github.com/nexuro-ops/distribution/releases/latest)
 [![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack)](https://kubernetes.slack.com/archives/C0154HYTAQH)
-[![License](https://img.shields.io/github/license/sighupio/distribution)](https://github.com/sighupio/distribution/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/nexuro-ops/distribution)](https://github.com/nexuro-ops/distribution/blob/main/LICENSE)
 
 ## Overview
 
@@ -136,17 +136,19 @@ Current supported versions of SD are:
 
 |                                  SD Version                               | Kubernetes Version |
 | :-----------------------------------------------------------------------: | :----------------: |
-| [`1.35.0`](https://github.com/sighupio/distribution/releases/tag/v1.35.0) |      `1.35.x`      |
-| [`1.33.1`](https://github.com/sighupio/distribution/releases/tag/v1.33.1) |      `1.33.x`      |
-| [`1.32.1`](https://github.com/sighupio/distribution/releases/tag/v1.32.1) |      `1.32.x`      |
+| [`1.35.0`](https://github.com/nexuro-ops/distribution/releases/tag/v1.35.0) |   `1.34.x, 1.35.x`  |
+| [`1.33.1`](https://github.com/nexuro-ops/distribution/releases/tag/v1.33.1) |      `1.33.x`      |
+| [`1.32.1`](https://github.com/nexuro-ops/distribution/releases/tag/v1.32.1) |      `1.32.x`      |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information about previous releases of the Distribution and the compatibility with `furyctl`.
 
 Also, check the [versioning documentation file][versioning] to know more about the versioning scheme of the distribution and the upgrade path.
 
-### Kubernetes 1.35.x Compatibility ⚙️
+### Kubernetes 1.34.x & 1.35.x Compatibility ⚙️
 
-SIGHUP Distribution v1.35.0 is now available with full support for **Kubernetes 1.35.x**!
+SIGHUP Distribution v1.35.0 is now available with full support for **Kubernetes 1.34.x and 1.35.x**!
+
+**Zero code changes required** when deploying across Kubernetes 1.34.x and 1.35.x. All APIs used are stable and compatible with both versions.
 
 **Important Requirements for Kubernetes 1.35:**
 - ⚠️ **Cgroup v2 Mandatory:** All infrastructure nodes must support cgroup v2 (cgroup v1 no longer supported)
@@ -183,14 +185,14 @@ SD is open-source software and it's released under the following [LICENSE](LICEN
 
 <!-- Core Modules -->
 
-[networking-module]: https://github.com/sighupio/module-networking
-[ingress-module]: https://github.com/sighupio/module-ingress
-[logging-module]: https://github.com/sighupio/module-logging
-[monitoring-module]: https://github.com/sighupio/module-monitoring
-[tracing-module]: https://github.com/sighupio/module-tracing
-[dr-module]: https://github.com/sighupio/module-dr
-[policy-module]: https://github.com/sighupio/module-policy
-[auth-module]: https://github.com/sighupio/module-auth
+[networking-module]: https://github.com/nexuro-ops/module-networking
+[ingress-module]: https://github.com/nexuro-ops/module-ingress
+[logging-module]: https://github.com/nexuro-ops/module-logging
+[monitoring-module]: https://github.com/nexuro-ops/module-monitoring
+[tracing-module]: https://github.com/nexuro-ops/module-tracing
+[dr-module]: https://github.com/nexuro-ops/module-dr
+[policy-module]: https://github.com/nexuro-ops/module-policy
+[auth-module]: https://github.com/nexuro-ops/module-auth
 [networking-version]: https://img.shields.io/badge/release-v3.0.0-blue
 [ingress-version]: https://img.shields.io/badge/release-v4.1.1-blue
 [logging-version]: https://img.shields.io/badge/release-v5.2.0-blue
@@ -202,23 +204,23 @@ SD is open-source software and it's released under the following [LICENSE](LICEN
 
 <!-- Addon Modules -->
 
-[kong-module]: https://github.com/sighupio/add-on-kong
-[service-mesh-module]: https://github.com/sighupio/add-on-service-mesh
-[registry-module]: https://github.com/sighupio/add-on-registry
-[storage-module]: https://github.com/sighupio/add-on-storage
-[kafka-module]: https://github.com/sighupio/add-on-kafka
-[kong-version]: https://img.shields.io/github/v/release/sighupio/add-on-kong
-[service-mesh-version]: https://img.shields.io/github/v/release/sighupio/add-on-service-mesh
-[registry-version]: https://img.shields.io/github/v/release/sighupio/add-on-registry
-[storage-version]: https://img.shields.io/github/v/release/sighupio/add-on-storage
-[kafka-version]: https://img.shields.io/github/v/release/sighupio/add-on-kafka
-[compatibility-matrix]: https://github.com/sighupio/distribution/blob/main/docs/COMPATIBILITY_MATRIX.md
-[versioning]: https://github.com/sighupio/distribution/blob/main/docs/VERSIONING.md
+[kong-module]: https://github.com/nexuro-ops/add-on-kong
+[service-mesh-module]: https://github.com/nexuro-ops/add-on-service-mesh
+[registry-module]: https://github.com/nexuro-ops/add-on-registry
+[storage-module]: https://github.com/nexuro-ops/add-on-storage
+[kafka-module]: https://github.com/nexuro-ops/add-on-kafka
+[kong-version]: https://img.shields.io/github/v/release/nexuro-ops/add-on-kong
+[service-mesh-version]: https://img.shields.io/github/v/release/nexuro-ops/add-on-service-mesh
+[registry-version]: https://img.shields.io/github/v/release/nexuro-ops/add-on-registry
+[storage-version]: https://img.shields.io/github/v/release/nexuro-ops/add-on-storage
+[kafka-version]: https://img.shields.io/github/v/release/nexuro-ops/add-on-kafka
+[compatibility-matrix]: https://github.com/nexuro-ops/distribution/blob/main/docs/COMPATIBILITY_MATRIX.md
+[versioning]: https://github.com/nexuro-ops/distribution/blob/main/docs/VERSIONING.md
 
 <!-- Misc -->
 
-[furyctl]: https://github.com/sighupio/furyctl
-[furyctl-plugins]: https://github.com/sighupio/furyctl?tab=readme-ov-file#plugins
+[furyctl]: https://github.com/nexuro-ops/furyctl
+[furyctl-plugins]: https://github.com/nexuro-ops/furyctl?tab=readme-ov-file#plugins
 [sighup-site]: https://sighup.io
 [CNCF]: https://landscape.cncf.io/?group=certified-partners-and-providers&item=platform--certified-kubernetes-distribution--fury-distribution
 [cncf-conformance]: https://www.cncf.io/certification/software-conformance/
