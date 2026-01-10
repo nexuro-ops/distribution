@@ -1,0 +1,201 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - '!*-docs*'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    name: Prepare Release
+    outputs:
+      release_notes: ${{ steps.notes.outputs.content }}
+      is_prerelease: ${{ steps.detect.outputs.is_prerelease }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Release Type
+        id: detect
+        run: |
+          TAG="${{ github.ref_name }}"
+          if [[ "$TAG" =~ -rc ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          TAG="${{ github.ref_name }}"
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 --exclude="$TAG" 2>/dev/null || echo "")
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            COMMIT_LOG=$(git log --oneline --pretty=format:"- %s" $(git rev-list --max-parents=0 HEAD)..HEAD)
+          else
+            COMMIT_LOG=$(git log --oneline --pretty=format:"- %s" "${PREVIOUS_TAG}..${TAG}")
+          fi
+
+          # Read documentation if it exists
+          RELEASE_DOCS=""
+          if [ -f "docs/RELEASE_MILESTONE_COMPLETION.md" ]; then
+            RELEASE_DOCS=$(sed '1,/^## /d' docs/RELEASE_MILESTONE_COMPLETION.md | head -50)
+          fi
+
+          {
+            echo "## Release: $TAG"
+            echo ""
+            echo "### Changes"
+            echo "$COMMIT_LOG"
+            echo ""
+            if [ -n "$RELEASE_DOCS" ]; then
+              echo "### Release Notes"
+              echo "$RELEASE_DOCS"
+              echo ""
+            fi
+            echo "### Security Information"
+            echo "- See [SECURITY_FIX_SUMMARY.md](docs/SECURITY_FIX_SUMMARY.md) for security fixes"
+            echo "- See [UPGRADE-${TAG%.0}.md](UPGRADE-${TAG%.0}.md) for upgrade instructions"
+            echo ""
+            echo "### Artifacts Included"
+            echo "- \`kfd.yaml\` - Kubernetes Fury Distribution configuration"
+            echo "- \`sbom.cyclonedx.json\` - SBOM in CycloneDX JSON format (for security tools)"
+            echo "- \`sbom.spdx.json\` - SBOM in SPDX JSON format (for compliance)"
+            echo "- \`sbom.spdx.txt\` - SBOM in SPDX Tag-Value format (human-readable)"
+          } > /tmp/release_notes.md
+
+          cat /tmp/release_notes.md >> $GITHUB_OUTPUT
+
+      - name: Upload Release Notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: /tmp/release_notes.md
+          retention-days: 1
+
+  generate-sbom:
+    runs-on: ubuntu-latest
+    name: Generate SBOM
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+
+      - name: Generate SPDX JSON SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Generate SPDX Tag-Value SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx
+          output-file: sbom.spdx.txt
+
+      - name: Upload SBOM Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-files
+          path: |
+            sbom.cyclonedx.json
+            sbom.spdx.json
+            sbom.spdx.txt
+          retention-days: 1
+
+  generate-checksums:
+    runs-on: ubuntu-latest
+    name: Generate Checksums
+    needs: generate-sbom
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download SBOM Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom-files
+
+      - name: Generate Checksums
+        run: |
+          # Generate checksums for key artifacts
+          for file in kfd.yaml sbom.*.json sbom.*.txt; do
+            if [ -f "$file" ]; then
+              md5sum "$file" >> checksums.md5
+              sha256sum "$file" >> checksums.sha256
+            fi
+          done
+
+      - name: Upload Checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: |
+            checksums.md5
+            checksums.sha256
+          retention-days: 1
+
+  create-release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    needs: [prepare-release, generate-sbom, generate-checksums]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: Organize Release Files
+        run: |
+          mkdir -p release-files
+
+          # Copy configuration
+          cp kfd.yaml release-files/
+
+          # Copy SBOM files
+          cp release-artifacts/sbom-files/* release-files/
+
+          # Copy checksums
+          cp release-artifacts/checksums/* release-files/
+
+          # Prepare release notes
+          cat release-artifacts/release-notes/release_notes.md > /tmp/final_release_notes.md
+
+          ls -la release-files/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          prerelease: ${{ needs.prepare-release.outputs.is_prerelease == 'true' }}
+          body_path: /tmp/final_release_notes.md
+          files: |
+            release-files/kfd.yaml
+            release-files/sbom.cyclonedx.json
+            release-files/sbom.spdx.json
+            release-files/sbom.spdx.txt
+            release-files/checksums.md5
+            release-files/checksums.sha256
+          draft: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
